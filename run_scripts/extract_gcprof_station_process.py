@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
@@ -325,10 +324,10 @@ def save_results(regridded_profiles, tracer_columns, params):
         z_dim = profile_cube.coord_dims(profile_cube.coord(name='altitude'))
         iris_tools.remove_dim_aux_coords(profile_cube, z_dim)
 
-        dataframe_units = profile_cube.units.format()
+        dataframe_units = str(profile_cube.units).replace('/', '_')
         if dataframe_units == 'unknown':
             dataframe_units = profile_cube.attributes['no_udunits2']
-        dataframe_name = "{tracer} ({units})".format(
+        dataframe_name = "{tracer}_{units}".format(
             tracer=profile_cube.attributes['name'],
             units=dataframe_units
         )
@@ -343,13 +342,13 @@ def save_results(regridded_profiles, tracer_columns, params):
         else:
             dataframe_profiles[dataframe_name] = ipandas.as_data_frame(profile_cube)
 
-    panel_profiles = pd.Panel(dataframe_profiles).transpose(0, 2, 1).astype(np.float64)
+    panel_profiles = pd.Panel(dataframe_profiles).astype(np.float64)
 
     series_columns = {}
     for column in tracer_columns:
-        series_name = "{tracer} ({units})".format(
+        series_name = "{tracer}_{units}".format(
             tracer=column.attributes['name'],
-            units='molec cm-2'
+            units='molec_cm-2'
         )
         series_columns[series_name] = ipandas.as_series(column)
         time_coord = column.coord('time')  
@@ -367,8 +366,9 @@ def save_results(regridded_profiles, tracer_columns, params):
         dataframe_columns.to_excel(out_columns_tables_fn, 'columns')
 
     elif params['out_format'] == 'csv':
-        dataframe_profiles = panel_profiles.transpose(2, 0, 1).to_frame()
-        dataframe_profiles.to_csv(out_profiles_tables_fn)
+        for pr in panel_profiles:
+            panel_profiles[pr].to_csv('{0}_{1}.csv'
+                                      .format(out_profiles_basepath, pr))
         dataframe_columns.to_csv(out_columns_tables_fn)
     
     return ([panel_profiles, dataframe_columns],
