@@ -96,7 +96,8 @@ def regrid_profile(profile_cube, station_profile):
     
     for prof_timeslice in profile_cube.slices('model_level_number'):
         rprof = iris_tools.regrid_conservative_vertical(
-                    prof_timeslice, station_profile
+                    prof_timeslice, station_profile,
+                    overlap_tol=0.95
                 )
         rprof_timeslices.append(rprof)
     
