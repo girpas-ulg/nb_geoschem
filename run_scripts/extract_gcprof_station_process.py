@@ -171,7 +171,7 @@ def processing(in_files, params):
     other_cubes = all_cubes.extract(params['other_fields'], strict=False)
     
     # datafields required for columns and profiles calculation
-    pedges_cube = other_cubes.extract_strict('PSURF_PEDGE-$')
+    #pedges_cube = other_cubes.extract_strict('PSURF_PEDGE-$')
     box_height_cube = other_cubes.extract_strict('BXHEIGHT_BXHGHT-$')
     try:
         n_air_cube = other_cubes.extract_strict('N(AIR)_BXHGHT-$')
@@ -200,13 +200,14 @@ def processing(in_files, params):
          for cube in tracer_cubes]
     )
     
-    pedges_profile, box_height_profile, n_air_profile = [
+    #pedges_profile, box_height_profile, n_air_profile = [
+    box_height_profile, n_air_profile = [
         extract_nearest_neighbour(cube, station_coords)
-        for cube in [pedges_cube, box_height_cube, n_air_cube]
+        for cube in [box_height_cube, n_air_cube]  #, pedges_cube]
     ]
 
     all_profiles = tracer_profiles + \
-                   [pedges_profile, box_height_profile, n_air_profile]
+                   [box_height_profile, n_air_profile] #, pedges_profile] 
 
     #global_topography = iris.load_cube(params['global_topography_datafile'])
     
