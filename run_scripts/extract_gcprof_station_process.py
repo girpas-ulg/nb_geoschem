@@ -151,7 +151,12 @@ def processing(in_files, params):
             cube.add_dim_coord(j_coord, 1)
             cube_is_ctm = False
         if not cube.coords('model_level_number'):
-            cube.add_dim_coord(l_coord, 2)
+            try:
+                cube.add_dim_coord(l_coord, 2)
+            except ValueError:
+                # as this callback applied before applying constraints,
+                # do nothing for, e.g., cubes related to emissions (2D)
+                pass
 
         if cube_is_ctm:
             lonlat_subset = iris.Constraint(longitude=i_coord.points,
