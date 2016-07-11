@@ -92,7 +92,7 @@ def wait_log_return(ar, logger, dt=1, dtlog=30, truncate=100000):
             logger.debug("Engine #{} output:\n{}".
                          format(metadata['engine_id'], stdout[-truncate:]))
     
-    return ar.result
+    return ar.result()
 
 
 # ---------------------------------------
@@ -105,7 +105,7 @@ def start_ipcluster(ipcluster_exe, nengines, profile,
     Start a new IPython parallel cluster (daemon)
     with a number of `nengines` and using `profile`.
     """
-    from IPython.parallel import Client
+    from ipyparallel import Client
 
     ipcluster = None
     rc = None
